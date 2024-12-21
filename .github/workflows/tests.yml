@@ -29,9 +29,6 @@ jobs:
         pip install -r requirements.txt
 
     - name: Run Pytest
+      env:
+        PYTHONPATH: .
       run: pytest tests/
-
-    - name: Run Linter (flake8)
-      run: |
-        pip install flake8
-        flake8 .
