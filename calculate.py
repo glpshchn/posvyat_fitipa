@@ -1,33 +1,39 @@
 import circle
 import square
+import triangle
 
+FIGS = {
+    'circle': {'module': circle, 'params': 1},
+    'square': {'module': square, 'params': 1},
+    'triangle': {'module': triangle, 'params': 3}
+}
 
-figs = ['circle', 'square']
-funcs = ['perimeter', 'area']
-sizes = {}
+FUNCS = ['perimeter', 'area']
+
 
 def calc(fig, func, size):
-	assert fig in figs
-	assert func in funcs
+    if fig not in FIGS:
+        raise ValueError(
+            f"Figure '{fig}' is not available. Available figures: "
+            f"{list(FIGS.keys())}"
+        )
+    if func not in FUNCS:
+        raise ValueError(
+            f"Function '{func}' is not available. Available functions: {FUNCS}"
+        )
 
-	result = eval(f'{fig}.{func}(*{size})')
-	print(f'{func} of {fig} is {result}')
+    module = FIGS[fig]['module']
+    func_to_call = getattr(module, func)
 
-if __name__ == "__main__":
-	func = ''
-	fig = ''
-	size = list()
-    
-	while fig not in figs:
-		fig = input(f"Enter figure name, avaliable are {figs}:\n")
-	
-	while func not in funcs:
-		func = input(f"Enter function name, avaliable are {funcs}:\n")
-	
-	while len(size) != sizes.get(f"{func}-{fig}", 1):
-		size = list(map(int, input("Input figure sizes separated by space, 1 for circle and square\n").split(' ')))
-	
-	calc(fig, func, size)
+    expected_params = FIGS[fig]['params']
+    if len(size) != expected_params:
+        raise ValueError(
+            f"For figure '{fig}', {expected_params} parameter(s) are required, "
+            f"but {len(size)} were provided."
+        )
 
-
-
+    result = func_to_call(*size)
+    print(
+        f'{func.capitalize()} of {fig} with size(s) {size} is {result}'
+    )
+    return result
